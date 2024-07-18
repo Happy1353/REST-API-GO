@@ -1,4 +1,4 @@
-package server
+package handlers
 
 import (
 	"database/sql"
@@ -16,13 +16,13 @@ type Note struct {
 	Text  string `json:"text"`
 }
 
-func scanNote(rows *sql.Rows) (Note, error) {
+func ScanNote(rows *sql.Rows) (Note, error) {
 	var note Note
 	err := rows.Scan(&note.ID, &note.Title, &note.Text)
 	return note, err
 }
 
-func getNote(c *gin.Context) {
+func GetNote(c *gin.Context) {
 	id := c.Param("id")
 
 	// convert id to number
@@ -42,7 +42,7 @@ func getNote(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, note)
 }
 
-func postNote(c *gin.Context) {
+func PostNote(c *gin.Context) {
 	var newNote postgres.Note
 
 	if err := c.BindJSON(&newNote); err != nil {
@@ -50,18 +50,16 @@ func postNote(c *gin.Context) {
 		return
 	}
 
-	// Вызов функции для создания новой записи
 	newID, err := postgres.CreateNote(newNote)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Failed to create note"})
 		return
 	}
 
-	// Возвращаем созданный ID клиенту
 	c.IndentedJSON(http.StatusOK, gin.H{"id": newID})
 }
 
-func getAllNotes(c *gin.Context) {
+func GetAllNotes(c *gin.Context) {
 	notes, err := postgres.GetAllNotes()
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve notes"})
@@ -76,7 +74,7 @@ func getAllNotes(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, notes)
 }
 
-func deleteNoteById(c *gin.Context) {
+func DeleteNoteById(c *gin.Context) {
 	id := c.Param("id")
 	// convert id to number
 	noteID, err := strconv.Atoi(id)

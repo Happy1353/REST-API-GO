@@ -18,7 +18,7 @@ type Note struct {
 var db *sql.DB
 
 // Return new Postgresql db instance
-func InitDB1() {
+func InitDB() {
 	var err error
 	db, err = sql.Open("postgres", "user=postgres password=123 dbname=test sslmode=disable")
 	if err != nil {

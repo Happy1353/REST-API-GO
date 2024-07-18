@@ -1,12 +1,12 @@
 package main
 
 import (
-	"notes-api/internal/server"
+	server "notes-api/internal"
 	"notes-api/pkg/postgres"
 )
 
 func main() {
-	postgres.InitDB1()
+	postgres.InitDB()
 
 	router := server.SetupRouter()
 	router.Run("localhost:8080")
